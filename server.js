@@ -18,6 +18,8 @@ process.on('unhandledRejection', (err) => {
 app.listen(port, () => {
     console.log(`Server is running on port http://localhost:${port}/`);
 });
+
+
 startDatabase();
 
 app.get('/', (req, res) => {
