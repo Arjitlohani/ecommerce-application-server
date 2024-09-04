@@ -14,7 +14,7 @@ const userModel = new mongoose.Schema({
     password: {
         type: String,
         trim: true,
-        required: true
+        required: true,
     },
     phone: {
         type: String,
@@ -30,6 +30,6 @@ const userModel = new mongoose.Schema({
         type: Number,
         default: 0
     }
-}, { timestamps: true });
+}, {timestamps: true})
 
-export default mongoose.model('user', userModel);
+export default mongoose.model('user', userModel)

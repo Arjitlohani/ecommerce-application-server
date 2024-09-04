@@ -1,5 +1,5 @@
 export const environmentConfig = {
     environment: process.env.ENVIRONMENT,
     port: process.env.PORT,
-    jwtsecret: process.env.JWTSECRET
+    jwtSecret: process.env.JWTSECRET
 }
