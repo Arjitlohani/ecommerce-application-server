@@ -1,11 +1,11 @@
 import userModel from "../models/userModel.js"
-import { createUser, getUserByID } from "../services/userService.js"
+import { createUser, getUserByID, updateUserById } from "../services/userService.js"
 import { comparePassword, hashPassword } from "../utils/authHelpers.js"
 import JWT from 'jsonwebtoken'
 import { environmentConfig } from "../config/environment.js"
 import tokenModel from "../models/tokenModel.js"
 import crypto from 'crypto'
-import { saveNewToken } from "../services/tokenService.js"
+import { getTokenByUserId, saveNewToken } from "../services/tokenService.js"
 import { sendEmail } from "../utils/emailHelper.js"
 
 export const registerUserController = async (req, res) => {
@@ -138,7 +138,7 @@ export const forgotPassword = async (req, res) => {
        const hashedResetPasswordToken = await hashPassword(resetPassowrdToken)
        await saveNewToken(existingUser._id, hashedResetPasswordToken)
        const clientURL = process.env.CLIENT_URL
-       const resetPasswordLink =`${clientURL}/password-reset?token=${resetPassowrdToken}`
+       const resetPasswordLink =`${clientURL}/password-reset?userId=${existingUser._id}&token=${resetPassowrdToken}`
        try{
         await sendEmail(existingUser.email,"Your Reset Password Link has arriver",
             {name: existingUser.name,link:resetPasswordLink},
@@ -171,4 +171,51 @@ export const forgotPassword = async (req, res) => {
             error
         })
     }
+}
+
+export const resetPassword = async (req, res) => {
+
+try{
+    const {userId, token, password} = req.body
+    const existingUser = await getUserByID(userId)
+    if(!existingUser){
+        return res.status(404).send({
+            success: false,
+            message: "User doesn't exists"
+        })
+    }
+    const existingToken = await getTokenByUserId(userId)
+    if(!existingToken){
+        return res.status(400).send({
+            success: false,
+            message: "Invalid or expired token"
+        })
+    }
+    const isValidToken = await comparePassword(token, existingToken.token)
+    if (!isValidToken){
+        return res.status(400).send({
+            success: false,
+            message: "Invalid or expired token"
+        })
+    }
+    const hashNewPassword = await hashPassword(password)
+    await updateUserById(existingUser._id, 
+        {password: hashNewPassword})
+
+    await tokenModel.deleteMany({userId: existingUser._id})
+    res.status(200).send({
+        success: true,
+        message: "Password reset successful"
+    })
+    
+
+}
+catch(error){
+    res.status(500).send({
+        success: false,
+        message: "Something went wrong",
+        error
+    })
+
+}
 }

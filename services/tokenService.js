@@ -8,3 +8,6 @@ export const saveNewToken = async (userId, token)=>{
     
 }
 
+export const getTokenByUserId = async (id)=>{
+    return await tokenModel.findOne({userId: id})
+}
