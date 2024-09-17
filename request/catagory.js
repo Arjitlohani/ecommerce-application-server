@@ -14,3 +14,14 @@ export const categoryUpdateRequest = [
     param('id').trim().notEmpty().withMessage("Valid id is required")
 
 ]
+
+export const categoryGetBySlug = [
+    param('slug').trim().notEmpty().isSlug().withMessage("Valid slug is required")
+
+]
+
+
+export const categoryDeleteRequest = [  
+
+    param('id').trim().notEmpty().withMessage("Valid id as params is required")
+]

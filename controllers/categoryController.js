@@ -1,6 +1,6 @@
 import slugify from 'slugify'
 import categoryModels from '../models/categoryModels.js'
-import { getCategoryById, saveCategory, updateCategoryService } from '../services/catagoryServices.js'
+import { getCategoryById, saveCategory, updateCategoryService, getCategoryBySlug as getCategoryBySlugServiec, deleteCategoryById } from '../services/catagoryServices.js'
 
 export const createCategory = async (req, res) => {
 
@@ -60,6 +60,34 @@ export const getCategory = async (req, res) => {
 
 }
 
+export const getCategoryBySlug = async (req, res) => {
+    try {
+        const {slug}=req.params
+        const category = await getCategoryBySlugServiec(slug)
+        if (!category){
+        return res.status(404).send({
+            success:false,
+            message:'Category with provided id not found',
+
+        })}
+
+        res.status(200).send({
+            success: true,
+            message: 'Category found',
+            category
+        })
+
+        
+    } catch (error) {
+        res.status(500).send({
+            success: false,
+            message: 'Something went wrong !!!-get category by slug',
+            error
+        })
+    }
+
+}
+
 export const getAllCategories = async (req, res) => {
 
 
@@ -111,4 +139,30 @@ export const updateCategory = async (req, res) => {
         
     }
 
+}
+
+export const deleteCategory = async (req, res)=>{
+    try {
+        const {id}=req.params
+        const category = await getCategoryById(id)
+        if (!category){
+            return res.status(404).send({
+                success: false,
+                message: 'Category not found'
+            })
+        }
+        await  deleteCategoryById(id)
+        res.status(200).send({
+            success: true,
+            message: 'Category deleted successfully'
+        })
+        
+    } catch (error) {
+        res.status(500).send({
+            success: false,
+            message: 'Something went wrong !!!-update category',
+            error
+        })
+        
+    }
 }
