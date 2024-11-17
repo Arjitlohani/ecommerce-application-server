@@ -13,7 +13,8 @@ export const sendEmail = async (useremail, subject, payload,templates) => {
     const password = process.env.EMAIL_PASSWORD;
     const __dirname = path.resolve();
     try{
-        const transporter = nodemailer.createTransport({
+        const transporter = nodema
+        iler.createTransport({
             host,
             port,
             auth: {

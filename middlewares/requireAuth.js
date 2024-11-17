@@ -6,7 +6,7 @@ export const requireAuth = (req, res, next) => {
         if(!authorization){
             return res.status(401).send({
                 success: false,
-                message: "Unauthorized"
+                message: "Unauthorized --------"
             })
         }
         const token = authorization.split(" ")[1]

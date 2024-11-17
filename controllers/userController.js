@@ -52,11 +52,13 @@ export const loginUserController = async (req, res) => {
                 message: "Invalid Password"
             })
         }
-        const token = JWT.sign({_id: doesuserExists._id}, environmentConfig.jwtSecret, {expiresIn: '1h'})
+        const token = JWT.sign({_id: doesuserExists._id,role:doesuserExists.role}, environmentConfig.jwtSecret, {expiresIn: '1h'})
         res.status(200).send({
             success: true,
             message: "Login successful",
-            token
+            token,
+            role:doesuserExists.role
+    
         })
     }
     catch(error){
@@ -218,4 +220,64 @@ catch(error){
     })
 
 }
+}
+
+export const updateUserProfile = async (req,res)=>{
+    try {
+
+        const user = req.user
+        const updatedUser = await userModel.findByIdAndUpdate((user._id),{...req.body},{new:true})
+        .select('-password')
+        res.status(200).send({
+            success: true,
+            message: "Profile updated successfully",
+            user: updatedUser
+        })
+    } catch (error) {
+        res.status(500).send({
+            success: false,
+            message: "Something went wrong- with update profile",
+            error
+        })
+        
+    }
+}
+
+export const changePasswordController = async (req,res)=>{
+    try {
+        // const user = req.user
+        
+        const {oldPassword, newPassword} = req.body
+        if (oldPassword === newPassword){
+            return res.status(400).send({
+                success: false,
+                message: "Old and new password can't be same"
+            })
+        }
+        const user = await getUserByID(req.user._id)
+        const isValidOldPassword = await comparePassword(oldPassword, user.password)
+        if(!isValidOldPassword){
+            return res.status(400).send({
+                success: false,
+                message: " old password does not match"
+            })
+        }
+        const hashedNewPassword = await hashPassword(newPassword)
+
+        await updateUserById(user._id, {password: hashedNewPassword})
+        res.status(200).send({
+            success: true,
+            message: "Password changed successfully"
+        })
+
+
+        
+    } catch (error) {
+        res.status(500).send({
+            success: false,
+            message: "Something went wrong--Change password",
+            error
+        })
+        
+    }
 }

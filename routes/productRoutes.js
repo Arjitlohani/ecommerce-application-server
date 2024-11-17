@@ -1,10 +1,10 @@
 import express from 'express'
-import { productByCategoryGetRequest, productByPageRequest, ProductCategoryGetBySlug, productCreateRequest, productDeleteRequest, productPhotoGetById, productUpdateRequest} from '../request/products.js'
+import { productByCategoryGetRequest, productByPageRequest, ProductCategoryGetBySlug, productCreateRequest, productDeleteRequest, productPhotoGetById, productSearchGetRequest, productUpdateRequest} from '../request/products.js'
 import {validator} from '../middlewares/validator.js'
 import { requireAuth } from '../middlewares/requireAuth.js'
 import { isAdmin } from '../middlewares/isAdmin.js'
 
-import { createProductController, getAllProductsController, getOneProductController, getProductByCategory, getProductByPageController, getProductCountController, getProductPhotoController, productDeleteController, productUpdateController } from '../controllers/productController.js'
+import { createProductController, getAllProductsController, getOneProductController, getProductByCategory, getProductByPageController, getProductCountController, getProductPhotoController, productDeleteController, productUpdateController, searchProductController } from '../controllers/productController.js'
 import { formidableParser } from '../middlewares/formidableParser.js'
 
 
@@ -19,6 +19,7 @@ productRoutes.put('/:slug',formidableParser,productUpdateRequest,validator,requi
 productRoutes.get('/total/count',requireAuth,getProductCountController)
 productRoutes.get('/pages/:page',productByPageRequest,validator,requireAuth,getProductByPageController)
 productRoutes.get('/category/:slug',productByCategoryGetRequest,validator,requireAuth,getProductByCategory)
+productRoutes.get('/products/search',productSearchGetRequest,validator,requireAuth,searchProductController)
 
 
 

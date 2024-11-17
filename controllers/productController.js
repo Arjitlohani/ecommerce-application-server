@@ -270,3 +270,41 @@ export const getProductByCategory = async (req, res) => {
     }
 
 }
+
+export const searchProductController = async (req,res) => {
+
+    try {
+        const {keyword} = req.query
+        const product = await productSchema.find({
+            $or:[
+                {
+                    name:{
+                        $regex:  keyword?.trim(), $options: 'i'
+                    }
+                },
+                {
+                    description:{
+                        $regex:  keyword?.trim(), $options: 'i'
+                    }
+                },
+            ]
+        }).select("-photo").populate("category")
+        console.log(keyword)
+        res.status(200).send({
+            success:true,
+            message: `Product fetched by keywords ${keyword} successfully`,
+            totalCount: product.length,
+            product,
+        })
+
+        
+    } catch (error) {
+        res.status(500).send({
+            success: false,
+            message: "Something went wrong--search product",
+            error
+        })
+    }
+
+
+}

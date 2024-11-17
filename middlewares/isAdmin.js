@@ -4,6 +4,7 @@ export const isAdmin = async (req, res, next) => {
 try{
     const id = req.user._id
     const user = await getUserByID(id)
+    console.log(user)
     if(!user){
         return res.status(404).send({
             success: false,

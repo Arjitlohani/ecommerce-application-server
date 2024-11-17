@@ -1,4 +1,4 @@
-import { check,param } from "express-validator";
+import { check,param,query } from "express-validator";
 
 export const productCreateRequest = [
     check('name').trim().notEmpty().withMessage("Name is required")
@@ -69,5 +69,12 @@ export const productByPageRequest = [
 
 export const productByCategoryGetRequest = [
     param('slug').trim().notEmpty().withMessage("Slug is required").isSlug().withMessage("Valid slug is required")
+
+]
+
+export const productSearchGetRequest = [
+    query('keyword').trim().notEmpty().withMessage("Keyword is required")
+    .isLength({min:2}).withMessage("Keyword must be at least 2  characters")
+    .isLength({max:50}).withMessage("Keyword can not exceed 50  characters"),
 
 ]
